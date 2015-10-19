@@ -306,8 +306,8 @@ def main():
                 |        |               |
                 ----------               |
                   ^   |                  |
-    GuiControl    |   |  initialRequest  |> worker Thread
-      Request     |   V         \        |   
+    matrixInfo    |   | matrixInfoRequest|> worker Thread
+                  |   V         \        |   
                 ----------       \       |
                 |        |        -------|---> function call
                 | Engine |               |
