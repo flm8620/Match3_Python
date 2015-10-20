@@ -117,13 +117,13 @@ class Delegate(QtCore.QObject):
 
 class MyButton(QtGui.QPushButton):
     exchange = pyqtSignal(int, int, Direction)
-    color=['#FF4040','#9ACD32','#7B68EE','#EEEE00','#7D26CD']
+    color=['#FF4040','#9ACD32','#7B68EE','#EEEE00','#7D26CD','#123456','#654321']
 
     def __init__(self, name, parent, i, j):
         super().__init__(name, parent)
         self._i = i
         self._j = j
-        self.setStyleSheet('QPushButton {background-color: '+self.color[int(name)%5]+'; color: black;}')
+        self.setStyleSheet('QPushButton {background-color: '+self.color[int(name)]+'; color: black;}')
 
     def mouseReleaseEvent(self, e):
         x, y = e.x(), e.y()
@@ -138,7 +138,7 @@ class MyButton(QtGui.QPushButton):
         elif y < 0 and 0 <= x < w:
             self.exchange.emit(self._i, self._j, Direction.Up)
 
-        return QtGui.QPushButton.mouseMoveEvent(self, e)
+        return QtGui.QPushButton.mouseReleaseEvent(self, e)
 
 
 class MainWindow(QtGui.QWidget):
@@ -147,6 +147,7 @@ class MainWindow(QtGui.QWidget):
 
     def __init__(self, gameDelegate):
         super(MainWindow, self).__init__()
+        self.tiles = []
         self.state = DelegateState.Busy
         self.gameDelegate = gameDelegate
         self.setGeometry(300, 300, 500, 500)
@@ -286,6 +287,15 @@ class MainWindow(QtGui.QWidget):
 
     def delegateFinished(self):
         self.state = DelegateState.Ready
+    def refreshAllButton(self):
+        for btn in self.tiles:
+            i,j=btn._i,btn._j
+            x, y, s = self.getSize(i, j)
+            btn.move(x, y)
+            btn.resize(s)
+    def resizeEvent(self, e):
+        self.refreshAllButton()
+        return QtGui.QWidget.resizeEvent(self, e)
 
 
 def main():
@@ -314,8 +324,9 @@ def main():
                 |        |               |
                 ----------               /
     '''
+    
     app = QtGui.QApplication(sys.argv)
-    engine = gameEngine.Engine(8, 8, 4)
+    engine = gameEngine.Engine(50, 50, 7)
     delegate = Delegate(engine)
     workerThread = QtCore.QThread()
     delegate.moveToThread(workerThread)

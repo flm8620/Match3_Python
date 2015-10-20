@@ -36,6 +36,7 @@ class Match():
 class Engine():
 
     def __init__(self, n, m, typeNum):
+        random.seed(2)
         assert n > 0 and m > 0
         self._typeNum = max(4, typeNum)
         self._n = n
@@ -121,7 +122,7 @@ class Engine():
             else:
                 noMoreMatch = True
             nextI, nextJ = match.pointB()
-            return set(matches)
+        return set(matches)
 
     def findMatchHorizontal(self, startI=0, startJ=0):
         i = startI
